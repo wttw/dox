@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource>
+  <file>defaultResolvers.json</file>
+  <file>defaultSurvey.json</file>
+</qresource>
+</RCC>

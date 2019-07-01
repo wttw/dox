@@ -1,0 +1,15 @@
+{
+    "resolvers": [
+	{"name": "System resolver", "url": "system"},
+	{"name": "Google UDP", "url": "udp://8.8.8.8:53"},
+	{"name": "Google DNS over TLS", "url": "dot://dns.google"},
+	{"name": "Cloudflare https POST", "url": "https://cloudflare-dns.com/dns-query"},
+	{"name": "Cloudflare https GET", "url": "https://cloudflare-dns.com/dns-query{?dns}"}
+    ],
+    "targets": [
+	{"name": "CNN", "url": "https://cnn.com/"},
+	{"name": "Google", "url": "https://gmail.com/"},
+	{"name": "Yahoo", "url": "https://yahoo.com/"}
+
+    ]
+}
