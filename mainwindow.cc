@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
 
     fileMenu->addAction(tr("Load Survey..."), surveyTab, &Survey::load);
-    fileMenu->addAction(tr("Save Resolvers..."), surveyTab, &Survey::save);
+    fileMenu->addAction(tr("Save Survey..."), surveyTab, &Survey::save);
 
 
     QAction *exitAct = fileMenu->addAction(tr("E&xit"), qApp, &QApplication::closeAllWindows);
@@ -70,6 +70,8 @@ void MainWindow::closeEvent(QCloseEvent */*event*/) {
     s.setValue("pos", pos());
     s.setValue("currentTab", tabs->currentIndex());
     s.endGroup();
+    queryTab->saveState();
+    pingTab->saveState();
 }
 
 void MainWindow::addResolver() {

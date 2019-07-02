@@ -10,6 +10,8 @@
 #include <QHBoxLayout>
 #include <QTextEdit>
 #include <QFormLayout>
+#include <QSettings>
+#include <QLineEdit>
 
 /*
  * A panel that'll lookup a DNS record via a chosen
@@ -43,7 +45,7 @@ Query::Query(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res) 
     name->setEditable(true);
     name->setObjectName("query_name");
     name->setInsertPolicy(QComboBox::InsertAtTop);
-    name->setEditText("cnn.com");
+    name->lineEdit()->setPlaceholderText(tr("e.g. github.com"));
     inputForm->addRow(tr("Query name"), name);
 
     auto buttonsLayout = new QHBoxLayout;
@@ -61,6 +63,21 @@ Query::Query(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res) 
     topLayout->addLayout(buttonsLayout);
     topLayout->addWidget(results, 1);
     setLayout(topLayout);
+    QSettings s;
+    s.beginGroup("query");
+    resolver->setCurrentIndex(s.value("resolver", 0).toInt());
+    type->setCurrentIndex(s.value("type", 0).toInt());
+    name->setEditText(s.value("name").toString());
+    s.endGroup();
+}
+
+void Query::saveState() {
+    QSettings s;
+    s.beginGroup("query");
+    s.setValue("resolver", resolver->currentIndex());
+    s.setValue("type", type->currentIndex());
+    s.setValue("name", name->currentText());
+    s.endGroup();
 }
 
 void Query::run() {

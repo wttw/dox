@@ -1,100 +1,74 @@
 #include "dnswire.h"
 
-#include "ldns/ldns.h"
+#include "dns-storage.hh"
+#include "dnsmessages.hh"
 
-// TODO(steve): less hostile logging / error handling
-#include <QtEndian>
-#include <QtDebug>
-
+// We use tdns from https://github.com/ahupowerdns/hello-dns
+// for serialization of DNS queries and replies, but this
+// file is the only place it appears.
 
 QByteArray WireRequest(ushort type, const QString &name) {
     // TODO(steve): Handle IDN
-    QByteArray asAscii = name.toUtf8();
-    ldns_rdf *qname = ldns_dname_new_frm_str(asAscii.constData());
-    if (qname == nullptr) {
-        qWarning() << "Failed to convert to qname " << name;
-        return QByteArray();
-    }
-    ldns_resolver * res = ldns_resolver_new();
-    Q_ASSERT(res != nullptr);
-    ldns_pkt *qpkt;
-    auto status = ldns_resolver_prepare_query_pkt(&qpkt, res, qname, static_cast<ldns_rr_type>(type), LDNS_RR_CLASS_IN, LDNS_RD);
-    if (status != LDNS_STATUS_OK) {
-        qWarning() << "Failed to prepare query packet for" << name << ": " << ldns_get_errorstr_by_id(status);
-        return QByteArray();
-    }
-
-//    qDebug() << "Query packet" << ldns_pkt2str(qpkt);
-
-    uint8_t *wire = NULL;
-    size_t size;
-    status = ldns_pkt2wire(&wire, qpkt, &size);
-
-    if (size == 0) {
-        return QByteArray();
-    }
-
-    QByteArray ret(reinterpret_cast<char*>(wire), size);
-    ldns_pkt_free(qpkt);
-    free(wire);
-    return ret;
+    DNSName dn = makeDNSName(name.toStdString());
+    DNSType dt = static_cast<DNSType>(type);
+    DNSMessageWriter dmw(dn, dt);
+    dmw.dh.rd = true;
+    dmw.randomizeID();
+    dmw.setEDNS(4000, false);
+    return QByteArray::fromStdString(dmw.serialize());
 }
 
+
+
 QString WireToPretty(const QByteArray &wire) {
-    ldns_pkt * rpkt;
-    ldns_status status = ldns_wire2pkt(&rpkt, reinterpret_cast<const uint8_t*>(wire.constData()), wire.length());
-    if (status != LDNS_STATUS_OK) {
-        qWarning() << "Failed to parse response: " << ldns_get_errorstr_by_id(status);
-        return QString();
-    }
-    QString ret;
-    char *str = ldns_pkt2str(rpkt);
-    if (str == nullptr) {
-        qWarning() << "Failed to stringify response";
-    } else {
-        ret = QString::fromUtf8(str);
+    DNSMessageReader dmr(wire.toStdString());
+    DNSSection rrsection, lastsection = DNSSection::Question;
+    uint32_t ttl;
+    DNSName dn;
+    DNSType dt;
+    dmr.getQuestion(dn, dt);
+    std::ostringstream str;
+
+    str << "; Question section\n" << dn << "\t" << dt << "\n";
+    std::unique_ptr<RRGen> rr;
+    while(dmr.getRR(rrsection, dn, dt, ttl, rr)) {
+        if (rrsection != lastsection) {
+            str << "; " << rrsection << " section\n";
+            lastsection = rrsection;
+        }
+        str << dn << "\t" << dt << "\t" << ttl << "\t" << rr->toString() << "\n";
     }
 
-    ldns_pkt_free(rpkt);
-
-    return ret;
+    return QString::fromStdString(str.str());
 }
 
 QList<QHostAddress> WireToAddresses(const QByteArray &wire) {
     if (wire.isEmpty()) {
         return QList<QHostAddress>();
     }
-    ldns_pkt * rpkt;
-    ldns_status status = ldns_wire2pkt(&rpkt, reinterpret_cast<const uint8_t*>(wire.constData()), wire.length());
-    if (status != LDNS_STATUS_OK) {
-        qWarning() << "Failed to parse response: " << ldns_get_errorstr_by_id(status);
-        return QList<QHostAddress>();
-    }
-
     QList<QHostAddress> ret;
-    auto arrs = ldns_pkt_rr_list_by_type(rpkt, LDNS_RR_TYPE_A, LDNS_SECTION_ANSWER);
-    for (size_t i = 0; i < ldns_rr_list_rr_count(arrs); ++i) {
-        ldns_rr *rr = ldns_rr_list_rr(arrs, i);
-        Q_ASSERT(ldns_rr_get_type(rr) == LDNS_RR_TYPE_A);
-        Q_ASSERT(ldns_rr_rd_count(rr) == 1);
-        auto rdf = ldns_rr_rdf(rr, 0);
-        Q_ASSERT(ldns_rdf_get_type(rdf) == LDNS_RDF_TYPE_A);
-        Q_ASSERT(ldns_rdf_size(rdf) == 4);
-        quint32 addr = qFromBigEndian<quint32>(ldns_rdf_data(rdf));
-        ret.append(QHostAddress(addr));
+
+    DNSMessageReader dmr(wire.toStdString());
+    DNSSection rrsection;
+    uint32_t ttl;
+    DNSName dn;
+    DNSType dt;
+    std::unique_ptr<RRGen> rr;
+
+    while (dmr.getRR(rrsection, dn, dt, ttl, rr)) {
+        if (rrsection != DNSSection::Answer) {
+            continue;
+        }
+        qDebug() << "  answer";
+        switch (rr->getType()) {
+        case DNSType::A:
+        case DNSType::AAAA:
+            ret.append(QHostAddress(QString::fromStdString(rr->toString())));
+            break;
+        default:
+            break;
+        }
     }
 
-    auto aaaarrs =  ldns_pkt_rr_list_by_type(rpkt, LDNS_RR_TYPE_AAAA, LDNS_SECTION_ANSWER);
-    for (size_t i = 0; i < ldns_rr_list_rr_count(aaaarrs); ++i) {
-        ldns_rr *rr = ldns_rr_list_rr(aaaarrs, i);
-        Q_ASSERT(ldns_rr_get_type(rr) == LDNS_RR_TYPE_AAAA);
-        Q_ASSERT(ldns_rr_rd_count(rr) == 1);
-        auto rdf = ldns_rr_rdf(rr, 0);
-        Q_ASSERT(ldns_rdf_get_type(rdf) == LDNS_RDF_TYPE_AAAA);
-        Q_ASSERT(ldns_rdf_size(rdf) == 16);
-        ret.append(QHostAddress(ldns_rdf_data(rdf)));
-    }
-
-    ldns_pkt_free(rpkt);
     return ret;
 }

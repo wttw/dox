@@ -43,7 +43,7 @@ public:
     QList<QHostAddress> Addresses() const;
     QString PrettyResults();
     qint64 responseTime() { return q->responseTime; }
-    bool hasError() const { !ErrorString().isEmpty(); }
+    bool hasError() const { return !ErrorString().isEmpty(); }
 signals:
     void finished();
 public slots:

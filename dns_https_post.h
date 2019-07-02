@@ -1,5 +1,5 @@
 #ifndef DOX_DNS_HTTPS_POST_H
-#define DOC_DNS_HTTPS_POST_H
+#define DOX_DNS_HTTPS_POST_H
 
 #include "dns.h"
 

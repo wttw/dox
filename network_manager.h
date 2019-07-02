@@ -1,5 +1,5 @@
 #ifndef DOX_NETWORK_MANAGER_H
-#define DOX_NETWORK_MANAGER_CC
+#define DOX_NETWORK_MANAGER_H
 
 #include <QObject>
 class QNetworkAccessManager;

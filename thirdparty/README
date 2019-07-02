@@ -1,0 +1,19 @@
+Various bits of third-party code, pulled in entire or in pieces.
+
+## URITemplate
+
+Parse URI templates, as used by DoH GET
+
+https://github.com/ReturnZero23/uritemplate-cpp
+
+## tdns
+
+DNS serialization, amongst other things
+
+https://github.com/ahupowerdns/hello-dns
+
+## simplesocket
+
+C++ helpers for sockets
+
+https://github.com/ahupowerdns/simplesocket

@@ -28,10 +28,7 @@ set(IDENTIFIER "com.wordtothewise.dox")
 
 add_project_meta(META_FILES_TO_INCLUDE)
 
-find_package(LDns REQUIRED)
-set(LIBS ${LIBS} ${LDNS_LIBRARIES})
-
-INCLUDE_DIRECTORIES(${LDNS_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(thirdparty/tdns thirdparty/simplesocket)
 
 qt5_add_resources(RESOURCES_SRC resources.qrc)
 
@@ -51,10 +48,17 @@ add_executable(${PROJECT_NAME} ${OS_BUNDLE}
   query.cc query.h
   ping.cc ping.h
   network_manager.cc network_manager.h
-  uritemplate.h
+
   survey.cc survey.h
   survey_data.cc survey_data.h
-  property_serializer.cc property_serializer.h
+
+  thirdparty/uritemplate.h
+
+  thirdparty/tdns/dns-storage.cc thirdparty/tdns/dns-storage.hh
+  thirdparty/tdns/record-types.cc thirdparty/tdns/record-types.hh
+  thirdparty/tdns/dnsmessages.cc thirdparty/tdns/dnsmessages.hh
+
+  thirdparty/simplesocket/comboaddress.hh
   )
 
 

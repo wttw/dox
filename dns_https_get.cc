@@ -2,7 +2,7 @@
 
 #include "dnswire.h"
 #include "network_manager.h"
-#include "uritemplate.h"
+#include "thirdparty/uritemplate.h"
 
 #include <QUrl>
 #include <QNetworkRequest>

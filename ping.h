@@ -16,6 +16,7 @@ class Ping : public QWidget {
     Q_OBJECT
 public:
     Ping(Resolvers *res, QWidget *parent=0);
+    void saveState();
 protected slots:
     void run();
     void pingQueue();

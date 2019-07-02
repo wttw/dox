@@ -11,6 +11,7 @@ class Query : public QWidget {
   Q_OBJECT
 public:
     Query(Resolvers *res, QWidget *parent=0);
+    void saveState();
 protected slots:
     void run();
 private:

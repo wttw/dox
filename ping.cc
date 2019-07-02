@@ -13,6 +13,8 @@
 #include <QHostAddress>
 #include <QTcpSocket>
 #include <QElapsedTimer>
+#include <QLineEdit>
+#include <QSettings>
 
 /*
  * A panel that will look up a site via a given resolver
@@ -34,7 +36,7 @@ Ping::Ping(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res), s
     name->setEditable(true);
     name->setObjectName("query_name");
     name->setInsertPolicy(QComboBox::InsertAtTop);
-    name->setEditText("cnn.com");
+    name->lineEdit()->setPlaceholderText(tr("e.g. https://yahoo.com/"));
     inputForm->addRow(tr("Target website"), name);
 
     auto buttonsLayout = new QHBoxLayout;
@@ -54,6 +56,20 @@ Ping::Ping(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res), s
     setLayout(topLayout);
 
     timer = new QElapsedTimer;
+
+    QSettings s;
+    s.beginGroup("ping");
+    resolver->setCurrentIndex(s.value("resolver", 0).toInt());
+    name->setCurrentText(s.value("name").toString());
+    s.endGroup();
+}
+
+void Ping::saveState() {
+    QSettings s;
+    s.beginGroup("ping");
+    s.setValue("resolver", resolver->currentIndex());
+    s.setValue("name", name->currentText());
+    s.endGroup();
 }
 
 void Ping::run() {
