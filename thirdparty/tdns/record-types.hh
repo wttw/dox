@@ -2,7 +2,8 @@
 #include <memory>
 #include "dns-storage.hh"
 #include "dnsmessages.hh"
-#include "comboaddress.hh"
+#include <QHostAddress>
+#include <QString>
 
 class DNSMessageReader;
 class DNSStringWriter;
@@ -71,15 +72,15 @@ struct AGen : RRGen
   AGen(uint32_t ip) : d_ip(ip) {}
   AGen(DNSMessageReader& dmr);
 
-  static std::unique_ptr<RRGen> make(const ComboAddress&);
+  static std::unique_ptr<RRGen> make(const QHostAddress&);
   static std::unique_ptr<RRGen> make(const std::string& s)
   {
-    return make(ComboAddress(s));
+    return make(QHostAddress(QString::fromStdString(s)));
   }
   void toMessage(DNSMessageWriter& dpw) override; //!< to packet/message
   std::string toString() const override; //!< to master zone format
   DNSType getType() const override { return DNSType::A; }
-  ComboAddress getIP() const; //!< Get IP address in ready to use form
+  QHostAddress getIP() const; //!< Get IP address in ready to use form
   uint32_t d_ip; //!< the actual IP
 };
 //! Generates an AAAA (IPv6 address) record
@@ -90,16 +91,16 @@ struct AAAAGen : RRGen
   {
     memcpy(d_ip, ip, 16);
   }
-  static std::unique_ptr<RRGen> make(const ComboAddress&);
+  static std::unique_ptr<RRGen> make(const QHostAddress&);
   static std::unique_ptr<RRGen> make(const std::string& s)
   {
-    return make(ComboAddress(s));
+    return make(QHostAddress(QString::fromStdString(s)));
   }
   void toMessage(DNSMessageWriter& dpw) override;
   std::string toString() const override;
   DNSType getType() const override { return DNSType::AAAA; }
 
-  ComboAddress getIP() const;
+  QHostAddress getIP() const;
   
   unsigned char d_ip[16];
 };

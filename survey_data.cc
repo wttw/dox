@@ -120,6 +120,7 @@ bool SurveyData::fromJson(const QJsonValue &v) {
         resolvers.append(resolver);
         resolverName.insert(resolver.url, resolver.name);
     }
+    return true;
 }
 
 void SurveyData::clear() {

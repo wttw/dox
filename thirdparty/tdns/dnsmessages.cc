@@ -119,7 +119,12 @@ DNSMessageWriter::~DNSMessageWriter() = default;
 
 void DNSMessageWriter::randomizeID()
 {
+#ifdef _WIN32
+// FIXME(steve@wordtothewise.com): rand() isn't very random
+  dh.id = rand();
+#else
   dh.id = random();
+#endif
 }
 
 void DNSMessageWriter::xfrName(const DNSName& name, bool compress)

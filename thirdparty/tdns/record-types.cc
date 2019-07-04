@@ -1,5 +1,6 @@
 #include "record-types.hh"
 #include <iomanip>
+#include <sstream>
 
 /*! 
    @file
@@ -140,30 +141,27 @@ void AGen::toMessage(DNSMessageWriter& dmw)
   dmw.xfrUInt32(d_ip);
 }
 
-ComboAddress AGen::getIP() const
+QHostAddress AGen::getIP() const
 {
-  ComboAddress ca;
-  ca.sin4.sin_family = AF_INET;
-  ca.sin4.sin_addr.s_addr = ntohl(d_ip);
-  return ca;
+  return QHostAddress(d_ip);
 }
 std::string AGen::toString() const
 {
-  return getIP().toString();
+  return getIP().toString().toStdString();
 }
 
-std::unique_ptr<RRGen> AGen::make(const ComboAddress& ca)
+std::unique_ptr<RRGen> AGen::make(const QHostAddress& ca)
 {
-  return std::make_unique<AGen>(ntohl(ca.sin4.sin_addr.s_addr));
+  return std::make_unique<AGen>(ca.toIPv4Address());
 }
 
 //////////////////////////
 
-std::unique_ptr<RRGen> AAAAGen::make(const ComboAddress& ca)
+std::unique_ptr<RRGen> AAAAGen::make(const QHostAddress& ca)
 {
-  if(ca.sin4.sin_family != AF_INET6)
+  if(ca.protocol() != QAbstractSocket::IPv6Protocol)
     throw std::runtime_error("This was not an IPv6 address in AAAA generator");
-  auto p = (const unsigned char*)ca.sin6.sin6_addr.s6_addr;
+  auto p = ca.toIPv6Address().c;
   unsigned char ip[16];
   memcpy(&ip, p, 16);
 
@@ -182,17 +180,14 @@ void AAAAGen::toMessage(DNSMessageWriter& x)
   x.xfrBlob(d_ip, 16);
 }
 
-ComboAddress AAAAGen::getIP() const
+QHostAddress AAAAGen::getIP() const
 {
-  ComboAddress ca;
-  memset(&ca, 0, sizeof(ca));
-  ca.sin4.sin_family = AF_INET6;
-  memcpy(&ca.sin6.sin6_addr.s6_addr, d_ip, 16);
-  return ca;
+  return QHostAddress(d_ip);
 }
+
 std::string AAAAGen::toString() const
 {
-  return getIP().toString();
+  return getIP().toString().toStdString();
 }
 
 ////////////////////////////////////////
@@ -360,8 +355,12 @@ void ClockTXTGen::toMessage(DNSMessageWriter& dmw)
 {
   struct tm tm;
   time_t now = time(0);
+#ifdef _WIN32
+  struct tm *p = localtime(&now);
+  tm = *p;
+#else
   localtime_r(&now, &tm);
-
+#endif
   std::string txt("overflow");
   char buffer[160];
   if(strftime(buffer, sizeof(buffer), d_format.c_str(), &tm))

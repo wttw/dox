@@ -1,6 +1,7 @@
 #include "dns-storage.hh"
 #include "record-types.hh"
 #include <iomanip>
+#include <sstream>
 using namespace std;
 
 //! Makes us relative to 'root', returns false if we weren't part of root
