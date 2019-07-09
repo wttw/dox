@@ -15,6 +15,7 @@
 #include <QElapsedTimer>
 #include <QLineEdit>
 #include <QSettings>
+#include <QLabel>
 
 /*
  * A panel that will look up a site via a given resolver
@@ -22,21 +23,25 @@
  */
 Ping::Ping(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res), sock(nullptr) {
     auto inputForm = new QFormLayout;
+    inputForm->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
     resolver = new QComboBox;
     resolver->setEditable(true);
-    resolver->setObjectName("query_resolver");
+    resolver->setObjectName("ping_resolver");
     connect(resolvers, &Resolvers::resolversChanged, [=](){
         resolvers->populateCombo(resolver);
     });
     resolvers->populateCombo(resolver);
     inputForm->addRow(tr("Resolver"), resolver);
+    resolverAnno = new QLabel;
+    inputForm->addRow(QString(), resolverAnno);
 
     name = new QComboBox;
     name->setEditable(true);
-    name->setObjectName("query_name");
+    name->setObjectName("ping_name");
     name->setInsertPolicy(QComboBox::InsertAtTop);
     name->lineEdit()->setPlaceholderText(tr("e.g. https://yahoo.com/"));
+    name->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     inputForm->addRow(tr("Target website"), name);
 
     auto buttonsLayout = new QHBoxLayout;
@@ -62,6 +67,8 @@ Ping::Ping(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res), s
     resolver->setCurrentIndex(s.value("resolver", 0).toInt());
     name->setCurrentText(s.value("name").toString());
     s.endGroup();
+    updateResolverAnno();
+    connect(resolver, &QComboBox::currentTextChanged, this, &Ping::updateResolverAnno);
 }
 
 void Ping::saveState() {
@@ -70,6 +77,27 @@ void Ping::saveState() {
     s.setValue("resolver", resolver->currentIndex());
     s.setValue("name", name->currentText());
     s.endGroup();
+}
+
+QString Ping::url() {
+  // We pull the resolver URL from the userdata for preloaded
+  // resolvers. But if the user has entered something manually
+  // then we use that instead. There's no great way to detect
+  // that, so we look to see if the displayed text is the same
+  // as the text that was set at this index.
+  if (!resolver->currentData().isNull() && resolver->currentText() == resolver->itemText(resolver->currentIndex())) {
+    return resolver->currentData().toString();
+  }
+  return resolver->currentText();
+}
+
+void Ping::updateResolverAnno() {
+  QString u = url();
+  if (u == resolver->currentText()) {
+    resolverAnno->clear();
+    return;
+  }
+  resolverAnno->setText(tr("<small>(%1)</small>").arg(u.toHtmlEscaped()));
 }
 
 void Ping::run() {
@@ -82,18 +110,7 @@ void Ping::run() {
 
     port = u.port(443);
 
-    QString resolverUrl;
-
-    // We pull the resolver URL from the userdata for preloaded
-    // resolvers. But if the user has entered something manually
-    // then we use that instead. There's no great way to detect
-    // that, so we look to see if the displayed text is the same
-    // as the text that was set at this index.
-    if (!resolver->currentData().isNull() && resolver->currentText() == resolver->itemText(resolver->currentIndex())) {
-        resolverUrl = resolver->currentData().toString();
-    } else {
-        resolverUrl = resolver->currentText();
-    }
+    QString resolverUrl = url();
 
     auto qa = new DnsLookup("A", u.host(), resolverUrl, this);
     auto qaaaa = new DnsLookup("AAAA", u.host(), resolverUrl, this);

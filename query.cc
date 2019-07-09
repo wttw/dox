@@ -12,6 +12,8 @@
 #include <QFormLayout>
 #include <QSettings>
 #include <QLineEdit>
+#include <QLabel>
+#include <QSizePolicy>
 
 /*
  * A panel that'll lookup a DNS record via a chosen
@@ -19,6 +21,7 @@
  */
 Query::Query(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res) {
     auto inputForm = new QFormLayout;
+    inputForm->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
     resolver = new QComboBox;
     resolver->setEditable(true);
@@ -27,7 +30,9 @@ Query::Query(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res) 
         resolvers->populateCombo(resolver);
     });
     resolvers->populateCombo(resolver);
+    resolverAnno = new QLabel;
     inputForm->addRow(tr("Resolver"), resolver);
+    inputForm->addRow(QString(), resolverAnno);
     type = new QComboBox;
     type->setEditable(true);
     type->setObjectName("query_type");
@@ -46,6 +51,7 @@ Query::Query(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res) 
     name->setObjectName("query_name");
     name->setInsertPolicy(QComboBox::InsertAtTop);
     name->lineEdit()->setPlaceholderText(tr("e.g. github.com"));
+    name->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     inputForm->addRow(tr("Query name"), name);
 
     auto buttonsLayout = new QHBoxLayout;
@@ -69,6 +75,8 @@ Query::Query(Resolvers *res, QWidget *parent) : QWidget(parent), resolvers(res) 
     type->setCurrentIndex(s.value("type", 0).toInt());
     name->setEditText(s.value("name").toString());
     s.endGroup();
+    updateResolverAnno();
+    connect(resolver, &QComboBox::currentTextChanged, this, &Query::updateResolverAnno);
 }
 
 void Query::saveState() {
@@ -80,19 +88,29 @@ void Query::saveState() {
     s.endGroup();
 }
 
-void Query::run() {
-    QString resolverUrl;
+void Query::updateResolverAnno() {
+  QString u = url();
+  if (u == resolver->currentText()) {
+    resolverAnno->clear();
+    return;
+  }
+  resolverAnno->setText(tr("<small>(%1)</small>").arg(u.toHtmlEscaped()));
+}
 
-    // We pull the resolver URL from the userdata for preloaded
-    // resolvers. But if the user has entered something manually
-    // then we use that instead. There's no great way to detect
-    // that, so we look to see if the displayed text is the same
-    // as the text that was set at this index.
-    if (!resolver->currentData().isNull() && resolver->currentText() == resolver->itemText(resolver->currentIndex())) {
-        resolverUrl = resolver->currentData().toString();
-    } else {
-        resolverUrl = resolver->currentText();
-    }
+QString Query::url() {
+  // We pull the resolver URL from the userdata for preloaded
+  // resolvers. But if the user has entered something manually
+  // then we use that instead. There's no great way to detect
+  // that, so we look to see if the displayed text is the same
+  // as the text that was set at this index.
+  if (!resolver->currentData().isNull() && resolver->currentText() == resolver->itemText(resolver->currentIndex())) {
+    return resolver->currentData().toString();
+  }
+  return resolver->currentText();
+}
+
+void Query::run() {
+    QString resolverUrl = url();
 
     QString queryType = type->currentText();
     if (!type->currentData().isNull()) {

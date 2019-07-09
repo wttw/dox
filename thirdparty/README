@@ -12,8 +12,8 @@ DNS serialization, amongst other things
 
 https://github.com/ahupowerdns/hello-dns
 
-## simplesocket
-
-C++ helpers for sockets
+Lightly modified to remove dependency on simplesocket
+by replacing ComboAddress with QHostAddress
 
 https://github.com/ahupowerdns/simplesocket
+

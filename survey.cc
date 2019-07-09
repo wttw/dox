@@ -191,7 +191,7 @@ QString Survey::loadFile(const QString &filename) {
 }
 
 QString Survey::richText() const {
-    QString ret = "<style>td {padding-left: 50px; padding-right: 50px; }</style>\n";
+    QString ret = "<style>td {padding-left: 4px; padding-right: 4px; }</style>\n";
 
     QMap<QString,QList<SurveyResult> > bytarget;
     for (auto &result : data.results) {

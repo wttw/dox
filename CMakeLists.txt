@@ -9,24 +9,18 @@ set(CMAKE_CXX_STANDARD 17)
 cmake_policy(SET CMP0071 NEW)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 set(CMAKE_AUTOMOC ON)
-
 set(CMAKE_AUTORCC ON)
-
-# We don't use .ui files
 set(CMAKE_AUTOUIC OFF)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets Network)
 
-include(QtCommon)
-
 set(COMPANY "Word to the Wise")
 set(COPYRIGHT "(c) Word to the Wise")
 set(IDENTIFIER "com.wordtothewise.dox")
-
-add_project_meta(META_FILES_TO_INCLUDE)
 
 INCLUDE_DIRECTORIES(thirdparty/tdns thirdparty/simplesocket)
 
@@ -58,9 +52,12 @@ add_executable(${PROJECT_NAME} ${OS_BUNDLE}
   thirdparty/tdns/record-types.cc thirdparty/tdns/record-types.hh
   thirdparty/tdns/dnsmessages.cc thirdparty/tdns/dnsmessages.hh
 
-  thirdparty/simplesocket/comboaddress.hh
   )
 
+
+include(QtCommon)
+
+add_project_meta(META_FILES_TO_INCLUDE)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
   MACOSX_BUNDLE TRUE
@@ -71,3 +68,7 @@ target_link_libraries(${PROJECT_NAME}
   Qt5::Network
   ${LIBS}
   )
+
+if(WIN32)
+  target_link_libraries(${PROJECT_NAME} ws2_32)
+endif()

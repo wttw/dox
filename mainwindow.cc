@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     s.endGroup();
 }
 
-void MainWindow::closeEvent(QCloseEvent */*event*/) {
+void MainWindow::closeEvent(QCloseEvent * /*event*/) {
     QSettings s;
     s.beginGroup("MainWindow");
     s.setValue("size", size());

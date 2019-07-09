@@ -31,15 +31,17 @@ the content of each URL using each resolver to locate it.
 
 ## Bugs
 
-Many probably. It's prone to just log and ignore errors rather than
+Many, probably. It's prone to just log and ignore errors rather than
 displaying them to the end user. This is not the tool you're looking
 for as a sysadmin to diagnose a server, nor to show that a DNS resolver
-is behavnig correctly.
+is behaving correctly.
 
 ## TODO
 
   * EDNS client subnet options
-
-  * A better set of default resolvers - possibly snarfed from [stubby](https://github.com/getdnsapi/stubby)
+  
+    * Persuading tdns to add them
+    
+    * UI, including a sensible default IP
 
   * End user docs

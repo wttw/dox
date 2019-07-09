@@ -1,7 +1,13 @@
 #pragma once
 #include "dns-storage.hh"
 #include "record-types.hh"
+#ifdef _WIN32
+#include <winsock2.h>
+#undef IN
+#else
 #include <arpa/inet.h>
+#endif
+
 #include <vector>
 
 /*!

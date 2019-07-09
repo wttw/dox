@@ -3,6 +3,8 @@
 #include "dns-storage.hh"
 #include "dnsmessages.hh"
 
+#include <sstream>
+
 // We use tdns from https://github.com/ahupowerdns/hello-dns
 // for serialization of DNS queries and replies, but this
 // file is the only place it appears.
@@ -21,6 +23,10 @@ QByteArray WireRequest(ushort type, const QString &name) {
 
 
 QString WireToPretty(const QByteArray &wire) {
+    if (wire.size() < 12) {
+        qWarning() << "Response too short: " << wire.size();
+        return QString("Response too short: %1").arg(wire.size());
+    }
     DNSMessageReader dmr(wire.toStdString());
     DNSSection rrsection, lastsection = DNSSection::Question;
     uint32_t ttl;
@@ -43,7 +49,8 @@ QString WireToPretty(const QByteArray &wire) {
 }
 
 QList<QHostAddress> WireToAddresses(const QByteArray &wire) {
-    if (wire.isEmpty()) {
+    if (wire.size() < 12) {
+        qWarning() << "Response too short: " << wire.size();
         return QList<QHostAddress>();
     }
     QList<QHostAddress> ret;
@@ -59,7 +66,6 @@ QList<QHostAddress> WireToAddresses(const QByteArray &wire) {
         if (rrsection != DNSSection::Answer) {
             continue;
         }
-        qDebug() << "  answer";
         switch (rr->getType()) {
         case DNSType::A:
         case DNSType::AAAA:

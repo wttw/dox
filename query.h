@@ -6,17 +6,21 @@ class QComboBox;
 class QPushButton;
 class QTextEdit;
 class Resolvers;
+class QLabel;
 
 class Query : public QWidget {
   Q_OBJECT
 public:
-    Query(Resolvers *res, QWidget *parent=0);
+    Query(Resolvers *res, QWidget *parent=nullptr);
     void saveState();
 protected slots:
     void run();
+    void updateResolverAnno();
 private:
+    QString url();
     Resolvers *resolvers;
     QComboBox *resolver;
+    QLabel *resolverAnno;
     QComboBox *type;
     QComboBox *name;
     QPushButton *go;
