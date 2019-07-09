@@ -2,8 +2,16 @@
     "resolvers": [
 	{"name": "System resolver", "url": "system"},
 	{"name": "Google UDP", "url": "udp://8.8.8.8:53"},
-	{"name": "Google DNS over TLS", "url": "dot://dns.google"},
+	{"name": "Google over TLS", "url": "dot://dns.google"},
+        {"name": "Google https POST", "url": "https://dns.google/dns-query"},
+        {"name": "Google https GET", "url": "https://dns.google/dns-query{?dns}"},
+        {"name": "Quad9 (secure) over TLS", "url": "dot://9.9.9.9"},
+        {"name": "Quad9 (insecure) over TLS", "url": "dot://9.9.9.10"},
+        {"name": "Cloudflare over TLS", "url": "dot://cloudflare-dns.com"},
 	{"name": "Cloudflare https POST", "url": "https://cloudflare-dns.com/dns-query"},
-	{"name": "Cloudflare https GET", "url": "https://cloudflare-dns.com/dns-query{?dns}"}
+	{"name": "Cloudflare https GET", "url": "https://cloudflare-dns.com/dns-query{?dns}"},
+        {"name": "Uncensored DNS over TLS", "url": "dot://unicast.censurfridns.dk"},
+        {"name": "Adguard (default) over TLS", "url": "dot://dns.adguard.com"},
+        {"name": "Adguard (family protection) over TLS", "url": "dot://dns-family.adguard.com"}
     ]
 }

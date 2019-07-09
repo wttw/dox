@@ -161,9 +161,11 @@ std::unique_ptr<RRGen> AAAAGen::make(const QHostAddress& ca)
 {
   if(ca.protocol() != QAbstractSocket::IPv6Protocol)
     throw std::runtime_error("This was not an IPv6 address in AAAA generator");
-  auto p = ca.toIPv6Address().c;
+  auto ip6 = ca.toIPv6Address();
   unsigned char ip[16];
-  memcpy(&ip, p, 16);
+  for (int i = 0; i < 16; ++i) {
+    ip[i] = ip6[i];
+  }
 
   return std::make_unique<AAAAGen>(ip);
 }

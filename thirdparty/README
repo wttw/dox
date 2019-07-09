@@ -15,8 +15,5 @@ https://github.com/ahupowerdns/hello-dns
 Lightly modified to remove dependency on simplesocket
 by replacing ComboAddress with QHostAddress
 
-## simplesocket
-
-C++ helpers for sockets
-
 https://github.com/ahupowerdns/simplesocket
+
