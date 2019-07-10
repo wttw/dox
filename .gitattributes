@@ -2,4 +2,4 @@
 * text=auto
 
 # Bash scripts need to be LF
-.sh text eol=lf
+*.sh text eol=lf
