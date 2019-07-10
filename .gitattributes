@@ -1,0 +1,5 @@
+# Default behaviour for line endings
+* text=auto
+
+# Bash scripts need to be LF
+.sh text eol=lf
