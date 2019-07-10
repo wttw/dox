@@ -1,6 +1,8 @@
 *~
 CMakeLists.txt.user
-
+b/
+build/
+Output/
 # Prerequisites
 *.d
 

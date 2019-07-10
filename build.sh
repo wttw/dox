@@ -8,18 +8,6 @@ VERSION=0.1
 APPNAME=dox
 
 # Error handling
-error() {
-  local parent_lineno="$1"
-  local message="$2"
-  local code="${3:-1}"
-  if [[ -n "$message" ]] ; then
-    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
-  else
-    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
-  fi
-  exit "${code}"
-}
-trap 'error ${LINENO}' ERR
 
 die() {
   echo "${BASH_SOURCE[1]}: line ${BASH_LINENO[0]}: ${FUNCNAME[1]}: ${1-Died}" >&2
