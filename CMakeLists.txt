@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
 
 project(dox LANGUAGES CXX VERSION 5.0.0)
 
-set(CMAKE_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
