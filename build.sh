@@ -118,8 +118,14 @@ CMAKE=cmake${EXE}
 NINJA=ninja${EXE}
 QTPATHS=qtpaths${EXE}
 GIT=git${EXE}
-
+BKAGENT=
 TOOLS=("$CMAKE" "$NINJA" "$QTPATHS" "$GIT")
+
+if [[ ${BUILDKITE:-false} == "true" ]]
+then
+BKAGENT=buildkite-agent${EXE}
+TOOLS+=("$BKAGENT")
+fi
 
 # Sanity check our environment to fail early
 for i in "${TOOLS[@]}" ; do
