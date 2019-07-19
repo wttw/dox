@@ -8,6 +8,12 @@ you might use `dig` or to survey the addresses different DNS
 servers will return for the same query (and measure performance
 differences between them).
 
+![Screenshot](https://user-images.githubusercontent.com/389596/61059488-fafeec80-a3f0-11e9-934c-abe1b43cf96d.png)
+
+## Platforms
+
+Dox builds on macOS, Windows and Linux and likely any other platform supported by Qt.
+
 ## Protocols
 
 Dox supports five different protocols
