@@ -55,9 +55,9 @@ windeployqt.exe --verbose 0 "scratch/${APPNAME}/${APPNAME}.exe" || die "windeplo
 signfile "scratch/${APPNAME}/${APPNAME}.exe" "${DESCRIPTION}"
 
 # Create a zip package
-cd scratch
+#cd scratch
 #zip -9r "${OUTPUTDIR}/${APPNAME}.zip" "${APPNAME}"
-cd ..
+#cd ..
 
 # Create an installer
 
@@ -82,3 +82,10 @@ mv "${MSI}" "${OUTPUTDIR}/${MSI}" || die "Failed to move MSI to ${OUTPUTDIR}"
 
 echo "Artefact at ${OUTPUTDIR}/${MSI}" 1>&2
 
+if [[ "${BUILDKITE:-false}" == "true" ]]
+then
+# upload artifact
+cd ${OUTPUTDIR}
+cd ..
+"${BUILDKITE_BIN_PATH}" artifact upload "**/${MSI}" || die "failed to upload artifacts" 
+fi

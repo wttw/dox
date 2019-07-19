@@ -2,8 +2,6 @@
 
 # Build script, to be run under wsl on Windows and bash elsewhere
 
-# FIXME(steve): Pull from git or a VERSION file or ...
-VERSION=0.1.1.0
 APPNAME=dox
 DESCRIPTION="${APPNAME} dns tool"
 # Error handling
@@ -79,7 +77,7 @@ if [[ "$HOST" == "unknown" ]] ; then
           fedora)
             HOST=fedora
 	    DISTRO="${ID}${VERSION_ID}"
-            ;;  
+            ;;
           *)
             die "Unexpected OS ${RELEASE}"
             ;;
@@ -116,20 +114,35 @@ case "$HOST" in
     ;;
 esac
 
-[[ ${VERSION} =~ ^([0-9]+\.[0-9]+\.[0-9]+)\.[0-9]+$ ]] || die "Invalid version: $VERSION" 
-
-SHORTVERSION="${BASH_REMATCH[1]}"
-
 CMAKE=cmake${EXE}
 NINJA=ninja${EXE}
 QTPATHS=qtpaths${EXE}
+GIT=git${EXE}
 
-TOOLS=("$CMAKE" "$NINJA" "$QTPATHS")
+TOOLS=("$CMAKE" "$NINJA" "$QTPATHS" "$GIT")
 
 # Sanity check our environment to fail early
 for i in "${TOOLS[@]}" ; do
   hash "$i" 2>/dev/null || die "No $i found"
 done
+
+# If VERSION hasn't been set, sniff it from git tags
+if [[ -z "${VERSION:-}" ]]
+then
+GITTAG=$("${GIT}" describe --abbrev=0 --match 'v*')
+
+[[ ${GITTAG} =~ ^v([0-9]+\.[0-9]+\.[0-9]+)[a-z]? ]] || die "Invalid git tag: $GITTAG"
+
+GITSHORTVERSION="${BASH_REMATCH[1]}"
+
+VERSION="${GITSHORTVERSION}.${BUILDKITE_BUILD_ID:-0}"
+fi
+
+
+[[ ${VERSION} =~ ^([0-9]+\.[0-9]+\.[0-9]+)\.[0-9]+$ ]] || die "Invalid version: $VERSION" 
+
+SHORTVERSION="${BASH_REMATCH[1]}"
+
 
 # The base directory of the checkout is where this script lives
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
