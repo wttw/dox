@@ -8,6 +8,11 @@
 macdeployqt "${APPNAME}.app" -dmg || die "macdeployqt failed"
 mv "${APPNAME}.dmg" "${OUTPUTDIR}/${APPNAME}-${SHORTVERSION}.dmg" || die "Failed to move DMG to ${OUTPUTDIR}"
 
+if [[ "${BUILDKITE:-false}" == "true" ]]
+then
+# upload artifact
 cd ${OUTPUTDIR}
 cd ..
 ${BKAGENT} artifact upload "**/${APPNAME}-${SHORTVERSION}.dmg" || die "failed to upload artifacts" 
+fi
+
