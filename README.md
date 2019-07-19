@@ -29,6 +29,30 @@ It doesn't support JSON API DNS over HTTPS, only "wireformat" queries.
 Given a list of DNS resolvers and a list of URLs Dox can retrieve
 the content of each URL using each resolver to locate it.
 
+## Installation
+
+There may be packaged binaries for Windows and macOS on the Github
+[releases](https://github.com/wttw/dox/releases) page, under "Assets".
+
+To build from source you'll need these prerequisites:
+
+  * [Qt](https://www.qt.io/download-qt-installer)
+
+  * [Cmake](https://cmake.org/)
+
+  * [Ninja](https://ninja-build.org/)
+
+... then ...
+
+```
+$ git clone https://github.com/wttw/dox.git
+$ cd dox
+$ mkdir build
+$ cd build
+$ cmake -G Ninja ..
+$ ninja
+```
+
 ## Bugs
 
 Many, probably. It's prone to just log and ignore errors rather than

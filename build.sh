@@ -3,10 +3,9 @@
 # Build script, to be run under wsl on Windows and bash elsewhere
 
 # FIXME(steve): Pull from git or a VERSION file or ...
-VERSION=0.1
-
+VERSION=0.1.1.0
 APPNAME=dox
-
+DESCRIPTION="${APPNAME} dns tool"
 # Error handling
 
 die() {
@@ -117,6 +116,9 @@ case "$HOST" in
     ;;
 esac
 
+[[ ${VERSION} =~ ^([0-9]+\.[0-9]+\.[0-9]+)\.[0-9]+$ ]] || die "Invalid version: $VERSION" 
+
+SHORTVERSION="${BASH_REMATCH[1]}"
 
 CMAKE=cmake${EXE}
 NINJA=ninja${EXE}
@@ -132,7 +134,7 @@ done
 # The base directory of the checkout is where this script lives
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-cd "$BASEDIR"
+cd "$BASEDIR" || die "$BASEDIR is strange"
 
 [[ -d .git ]] || die "$BASEDIR isn't the root of a git checkout"
 
@@ -152,25 +154,25 @@ echo "Building on $HOST for $TARGET in $BUILDTYPE mode"
 
 [[ -d build ]] || mkdir build
 
-cd build
+cd build || die "No build directory"
 
 [[ -d "$BUILDTYPE" ]] || mkdir "$BUILDTYPE"
 
-cd "$BUILDTYPE"
+cd "$BUILDTYPE" || die "No build type directory: '$BUIDTYPE'"
 
 if [[ ! -f build.ninja || ! -f rules.ninja ]]
 then
-    "$CMAKE" -DCMAKE_BUILD_TYPE=$BUILDTYPE -G Ninja ../..
+    "$CMAKE" -DCMAKE_BUILD_TYPE=$BUILDTYPE -G Ninja ../.. || die "cmake failed"
 fi
 
-"$NINJA"
+"$NINJA" || die "ninja failed"
 
-#export BUILDTYPE BASEDIR HOST DISTRO TARGET VERSION
+#export BUILDTYPE BASEDIR HOST DISTRO TARGET VERSION SHORTVERSION
 
 if [[ "$BUILDTYPE" == "Release" ]]
 then
   OUTPUTDIR="${BASEDIR}/Output/${VERSION}/${TARGET}"
-  mkdir -p "${OUTPUTDIR}"
+  mkdir -p "${OUTPUTDIR}" || die "Failed to create outputdir '$OUTPUTDIR'"
   echo "Packaging to ${OUTPUTDIR}" 1>&2
   if [[ -f "${BASEDIR}/package/package-${TARGET}.sh" ]]
   then

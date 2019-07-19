@@ -23,13 +23,14 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets Network)
 set(COMPANY "Word to the Wise")
 set(COPYRIGHT "(c) Word to the Wise")
 set(IDENTIFIER "com.wordtothewise.dox")
+set(ICON_NAME "dox-icon")
 
-INCLUDE_DIRECTORIES(thirdparty/tdns thirdparty/simplesocket)
+INCLUDE_DIRECTORIES(thirdparty/tdns)
 
 qt5_add_resources(RESOURCES_SRC resources.qrc)
 
 add_executable(${PROJECT_NAME} ${OS_BUNDLE}
-    ${RESOURCES_SRC}
+    ${RESOURCES_SRC} 
   main.cc
   dns.cc dns.h
   dns_system.cc dns_system.h

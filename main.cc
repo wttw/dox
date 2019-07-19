@@ -1,6 +1,8 @@
 #include <QApplication>
 #include <QtDebug>
 #include <QSslSocket>
+#include <QIcon>
+
 #include "mainwindow.h"
 #include "network_manager.h"
 
@@ -10,6 +12,7 @@ int main(int argc, char **argv) {
     app.setApplicationName("dox");
     app.setOrganizationName("Word to the Wise");
     app.setOrganizationDomain("wordtothewise.com");
+    app.setWindowIcon(QIcon(":/dox-icon.png"));
 
     initNetworkManager(&app);
 

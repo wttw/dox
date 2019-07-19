@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="798ab62e-eff9-4942-abbf-7543169b1326"
+           Name="Dox $(var.Version)" Version="$(var.LongVersion)"
+           Manufacturer="Word to the Wise"
+           Language="1033" Codepage="1252"
+           UpgradeCode="263f7a74-c0b4-4c8c-ab18-f6e9c350b800">
+    <Package Id="*" Keywords="dox dns" Description="Dox Installer" Manufacturer="Word to the Wise"
+           InstallerVersion="405" Languages="1033" SummaryCodepage="1252" Compressed="yes" />
+    <Media Id="1" Cabinet="dox.cab" EmbedCab="yes" />
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder" Name="PFiles">
+        <Directory Id="APPLICATIONFOLDER" Name="Dox">
+          <Component Id="MainExecutable" Guid="f0e1390e-75af-45b6-b07a-e2f727941ba1">
+            <File Id="DoxEXE" Source="$(var.bindir)\dox.exe" KeyPath="yes">
+              <Shortcut Id="startMenuDox" Directory="ProgramMenuDir" Name="Dox" WorkingDirectory="INSTALLDIR" Icon="dox.ico" IconIndex="0" Advertise="yes" />
+              <Shortcut Id="desktopAbacus" Directory="DesktopFolder" Name="Dox" WorkingDirectory="INSTALLDIR" Icon="dox.ico" IconIndex="0" Advertise="yes" /> 
+            </File>
+          </Component>
+        </Directory>
+      </Directory>
+    
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="Dox">
+          <Component Id="ProgramMenuDir" Guid="d2e34281-7930-4d77-ab87-e235896b7a16">
+            <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]" Type="string" Value="" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+    <Feature Id="Complete" Level="1">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentGroupRef Id="QtDlls" />
+      <ComponentRef Id="ProgramMenuDir" />
+    </Feature>
+    <Icon Id="dox.ico" SourceFile="$(var.srcdir)\res\dox-icon.ico" />
+  </Product>
+</Wix>

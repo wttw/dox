@@ -3,5 +3,6 @@
 <qresource>
   <file>defaultResolvers.json</file>
   <file>defaultSurvey.json</file>
+  <file>dox-icon.png</file>
 </qresource>
 </RCC>
