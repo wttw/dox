@@ -87,5 +87,5 @@ then
 # upload artifact
 cd ${OUTPUTDIR}
 cd ..
-"${BUILDKITE_BIN_PATH}" artifact upload "**/${MSI}" || die "failed to upload artifacts" 
+"${BKAGENT}" artifact upload "**/${MSI}" || die "failed to upload artifacts" 
 fi
