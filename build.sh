@@ -184,6 +184,12 @@ then
     "$CMAKE" -DCMAKE_BUILD_TYPE=$BUILDTYPE -G Ninja ../.. || die "cmake failed"
 fi
 
+# Cmake+Qt do some things a cmake run time they should really do during the build
+if [[ $DISTRO == "darwin" && ! -f ${APPNAME}.app/Contents/Info.plist ]]
+then
+    "$CMAKE" -DCMAKE_BUILD_TYPE=$BUILDTYPE -G Ninja ../.. || die "cmake failed"
+fi
+
 "$NINJA" || die "ninja failed"
 
 #export BUILDTYPE BASEDIR HOST DISTRO TARGET VERSION SHORTVERSION

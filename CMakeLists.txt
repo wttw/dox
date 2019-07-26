@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0 FATAL_ERROR)
 
-project(dox LANGUAGES CXX VERSION 5.0.0)
+project(dox LANGUAGES CXX VERSION 0.1.1)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
