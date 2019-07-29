@@ -81,18 +81,18 @@ productbuild --synthesize --product "${BASEDIR}/package/requirements.plist" --pa
 
 productbuild --distribution distribution.plist --resources . "${APPNAME}.pkg" || die "Failed to create ${APPNAME}.pkg"
 
-if [[ ! -z "${SIGNCERTID:-}" ]]
+if [[ ! -z "${INSTALLERCERTID:-}" ]]
 then
-  productsign --sign="${INSTELLERCERTID}" --keychain="${SIGNKCFILE}" "${APPNAME}.pkg" "${OUTPUTDIR}/${APPNAME}.pkg" || die "Failed to sign package"
+  productsign --sign="${INSTALLERCERTID}" --keychain="${SIGNKCFILE}" "${APPNAME}.pkg" "${OUTPUTDIR}/${APPNAME}.pkg" || die "Failed to sign package"
 else
   cp "${APPNAME}.pkg" "${OUTPUTDIR}/${APPNAME}.pkg" || die "Failed to copy package package"
 fi
 
 rm -rf dist
 mkdir -p dist || die "failed to create dist directory for packaging"
-cp "${OUTPUTDIR}/${APPNAME}.pkg" "dist/${APPNAME}.pkg" or die "failed to copy installer to dmg scratch dir"
-rm -f "${OUTPUTDIR}/${APPNAME}-${SHORTVERSION}.dmg" 
-hdiutil create -volname "${APPNAME} ${SHORTVERSION}" -srcfolder ./dist -ov "${OUTPUTDIR}/${APPNAME}-${SHORTVERSION}.dmg" or die "failed to create final dmg"
+cp "${OUTPUTDIR}/${APPNAME}.pkg" "dist/${APPNAME}.pkg" || die "failed to copy installer to dmg scratch dir"
+rm -f "${OUTPUTDIR}/${APPNAME}-${SHORTVERSION}.dmg"
+hdiutil create -volname "${APPNAME} ${SHORTVERSION}" -srcfolder ./dist -ov "${OUTPUTDIR}/${APPNAME}-${SHORTVERSION}.dmg" || die "failed to create final dmg"
 
 #productbuild --product "${APPNAME}.app" "/Applications/${APPNAME}.app" "${OUTPUTDIR}/${APPNAME}-${SHORTVERSION}.pkg"
 

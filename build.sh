@@ -177,7 +177,14 @@ cd build || die "No build directory"
 
 [[ -d "$BUILDTYPE" ]] || mkdir "$BUILDTYPE"
 
-cd "$BUILDTYPE" || die "No build type directory: '$BUIDTYPE'"
+cd "$BUILDTYPE" || die "No build type directory: '$BUILDTYPE'"
+
+if [[ "$BUILDTYPE" == "Release" ]]
+then
+    # Signing and packaging can be destructive, linking is cheap
+    rm -f "${APPNAME}" "${APPNAME}.exe"
+    rm -rf "${APPNAME}.app"
+fi
 
 if [[ ! -f build.ninja || ! -f rules.ninja ]]
 then
