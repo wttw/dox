@@ -6,7 +6,7 @@
 		<key>BundleHasStrictIdentifier</key>
 		<true/>
 		<key>BundleIsRelocatable</key>
-		<true/>
+		<false/>
 		<key>BundleIsVersionChecked</key>
 		<true/>
 		<key>BundleOverwriteAction</key>
@@ -35,7 +35,25 @@
 				<key>BundleOverwriteAction</key>
 				<string></string>
 				<key>RootRelativeBundlePath</key>
+				<string>dox.app/Contents/Frameworks/QtQuick.framework</string>
+			</dict>
+			<dict>
+				<key>BundleOverwriteAction</key>
+				<string></string>
+				<key>RootRelativeBundlePath</key>
 				<string>dox.app/Contents/Frameworks/QtCore.framework</string>
+			</dict>
+			<dict>
+				<key>BundleOverwriteAction</key>
+				<string></string>
+				<key>RootRelativeBundlePath</key>
+				<string>dox.app/Contents/Frameworks/QtQml.framework</string>
+			</dict>
+			<dict>
+				<key>BundleOverwriteAction</key>
+				<string></string>
+				<key>RootRelativeBundlePath</key>
+				<string>dox.app/Contents/Frameworks/QtVirtualKeyboard.framework</string>
 			</dict>
 			<dict>
 				<key>BundleOverwriteAction</key>

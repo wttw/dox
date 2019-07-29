@@ -13,13 +13,15 @@ function lockup {
   fi
 }
 
-SCRATCH="scratch/Applications"
+SCRATCH="scratch"
 rm -rf "${SCRATCH}"
 mkdir -p "${SCRATCH}" || die "Failed to create scratch directory"
 cp -a "${APPNAME}.app" "${SCRATCH}/${APPNAME}.app" || die "Failed to copy app"
 
 cd "${SCRATCH}" || die "Scratch dir went away"
 
+# TODO(steve): Prune unused frameworks - e.g. Qml, Quick, VirtualKeyboard -
+# and plugins
 macdeployqt "${APPNAME}.app" -appstore-compliant || die "macdeployqt failed"
 
 # Sign one or more files. No-op if we don't have a certificate configured.
@@ -28,8 +30,8 @@ function signfile {
   then
     return 0
   fi
-  TIMESTAMPSERVERS="http://timestamp.comodoca.com/authenticode http://timestamp.verisign.com/scripts/timestamp.dll http://timestamp.globalsign.com/scripts/timestamp.dll http://tsa.starfieldtech.com"
-  
+
+# Paranoia about dead timestamping servers, though Apple's seem reliable  
   for attempt in {1..120}
   do
 # Sign with a certificate SIGNCERTID from a keychain SIGNKCFILE requesting hardened runtime
@@ -64,14 +66,11 @@ signfile "${APPNAME}.app"
 
 # Create intermediate component package with pkgbuild, using DoxComponent.plist
 # that was previously generated via
-# "pkgbuild --analyze --root . DoxComponent.plist" from the directory the .app is in
+# "pkgbuild --analyze --root scratch DoxComponent.plist" from our scratch dir
 
-PKGROOT="${BASEDIR}/build/${BUILDTYPE}/${SCRATCH}"
+cd "${BASEDIR}/build/${BUILDTYPE}" || die "bad pkgroot"
 
-cd "${PKGROOT}" || die "bad pkgroot"
-cd .. || die "something bad"
-
-pkgbuild --root "${PKGROOT}" --component-plist "${BASEDIR}/package/DoxComponent.plist" "${APPNAME}Component.pkg" || die "Failed to create component package" || die "pkgbuild failed"
+pkgbuild --root "${SCRATCH}" --install-location /Applications --component-plist "${BASEDIR}/package/DoxComponent.plist" "${APPNAME}Component.pkg" || die "Failed to create component package" || die "pkgbuild failed"
 
 # Build ourselves a distribution plist
 

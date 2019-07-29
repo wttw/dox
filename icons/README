@@ -1,0 +1,13 @@
+The source for all the icons is dox-icon.svg
+
+The shell script buildicons.sh is run (on Linux, most likely) to
+generate a windows icon in ../res/dox-icon.ico and a macOS iconset
+directory in ./dox-icon.iconset (which will be converted to a .icns
+for adding to the bundle using iconutil at compile time)
+
+The source SVG is under a CC3.0 license:
+<div>Icons made by <a href="https://www.flaticon.com/authors/freepik"
+title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"
+title="Flaticon">www.flaticon.com</a> is licensed by
+<a href="http://creativecommons.org/licenses/by/3.0/"
+title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
