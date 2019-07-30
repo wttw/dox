@@ -132,6 +132,12 @@ for i in "${TOOLS[@]}" ; do
   hash "$i" 2>/dev/null || die "No $i found"
 done
 
+# In release build set VERSION from buildkite
+if [[ ${BUILDKITE:-false} == "true" ]]
+then
+    VERSION=$(${BKAGENT} meta-data get release-version || true)
+fi
+
 # If VERSION hasn't been set, sniff it from git tags
 if [[ -z "${VERSION:-}" ]]
 then
@@ -169,7 +175,7 @@ case "$FLAG_DEBUG" in
     ;;
 esac
 
-echo "Building on $HOST for $TARGET in $BUILDTYPE mode"
+echo "Building $VERSION on $HOST for $TARGET in $BUILDTYPE mode"
 
 [[ -d build ]] || mkdir build
 
