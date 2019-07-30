@@ -36,6 +36,6 @@
       <ComponentGroupRef Id="QtDlls" />
       <ComponentRef Id="ProgramMenuDir" />
     </Feature>
-    <Icon Id="dox.ico" SourceFile="$(var.srcdir)\res\dox-icon.ico" />
+    <Icon Id="dox.ico" SourceFile="$(var.srcdir)\icons\dox.ico" />
   </Product>
 </Wix>

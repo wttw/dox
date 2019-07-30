@@ -35,5 +35,5 @@ do
 done	     
 
 # Apparently the large, 256x256, icon needs to also be included as the raw png
-icotool ${ARGS[@]} || die "Failed to create dox-icon.ico"
+icotool ${ARGS[@]} || die "Failed to create dox.ico"
 
