@@ -1,9 +1,9 @@
-The source for all the icons is dox-icon.svg
+The source for all the icons is dox.svg
 
 The shell script buildicons.sh is run (on Linux, most likely) to
-generate a windows icon in ../res/dox-icon.ico and a macOS iconset
-directory in ./dox-icon.iconset (which will be converted to a .icns
-for adding to the bundle using iconutil at compile time)
+generate a windows icon in dox.ico and a set of PNGs of assorted
+sizes (which will be converted to a .iconset and .icns
+for adding to the bundle using iconutil at compile time on darwin).
 
 The source SVG is under a CC3.0 license:
 <div>Icons made by <a href="https://www.flaticon.com/authors/freepik"

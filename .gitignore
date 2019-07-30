@@ -3,6 +3,8 @@ CMakeLists.txt.user
 b/
 build/
 Output/
+.DS_Store
+
 # Prerequisites
 *.d
 

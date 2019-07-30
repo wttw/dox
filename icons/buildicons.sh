@@ -27,14 +27,13 @@ do
     rsvg-convert --width=$width --height=$width --output="icon_${width}x${width}.png" "${NAME}.svg" || die "failed to render svg"
 done
 
-#rm -rf scratch
-#mkdir -p scratch || die "couldn't create scratch directory"
+ARGS=(--create --output=dox.ico -r icon_256x256.png)
 
-#for width in 16 24 32 48 256
-#do
-#    cp "icon_${width}x${width}.png" "scratch/icon_${width}x${width}.png"
-#done
+for width in 16 24 32 48
+do
+    ARGS+=("icon_${width}x${width}.png")
+done	     
 
 # Apparently the large, 256x256, icon needs to also be included as the raw png
-#icotool --create --output=../res/dox-icon.ico -r scratch/icon_256x256.png scratch/*.png || die "Failed to create dox-icon.ico"
-#rm -rf scratch
+icotool ${ARGS[@]} || die "Failed to create dox-icon.ico"
+
