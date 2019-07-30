@@ -22,9 +22,8 @@ echo Fetching artifacts for ${VERSION}
 
 rm -rf scratch
 mkdir scratch || die "Failed to make a scratch directory"
-cd scratch || die
 
-buildkite-agent artifact download "*" || die failed to download artifacts
+buildkite-agent artifact download "*" scratch || die failed to download artifacts
 
 echo downloaded so many things
 
