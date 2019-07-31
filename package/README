@@ -1,1 +1,5 @@
-Scripts for packaging to .msi on Windows and .dmg on macOS.
+package-* are scripts for packaging to .msi on Windows and .dmg on macOS.
+
+deploy.sh is used to stamp a release and upload assets to github
+
+Other files are templates and configuration used by the packaging process
